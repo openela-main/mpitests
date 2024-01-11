@@ -1,0 +1,28 @@
+From 37a4deab051d89b95159c4a3559dd084ec7df1c4 Mon Sep 17 00:00:00 2001
+From: Kamal Heib <kheib@redhat.com>
+Date: Mon, 10 Jul 2023 13:15:27 -0400
+Subject: [PATCH] Avoid build failure for i686
+
+Signed-off-by: Kamal Heib <kheib@redhat.com>
+---
+ c/util/osu_util_validation.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/c/util/osu_util_validation.c b/c/util/osu_util_validation.c
+index c2cd1fa14c1c..f04ed3c1d958 100644
+--- a/c/util/osu_util_validation.c
++++ b/c/util/osu_util_validation.c
+@@ -299,8 +299,10 @@ static int atom_binary_compare(MPI_Datatype dtype, void *a, void *b)
+             return COMPARE_AS_TYPE(__int32_t, a, b);
+         case 8:
+             return COMPARE_AS_TYPE(__int64_t, a, b);
++#ifndef __i686__
+         case 16:
+             return COMPARE_AS_TYPE(__int128_t, a, b);
++#endif
+     }
+     return 0;
+ }
+-- 
+2.41.0
+

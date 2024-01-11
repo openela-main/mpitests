@@ -1,9 +1,9 @@
 %global intel_mpi_bench_vers IMB-v2021.3
-%global osu_micro_bench_vers 5.8
+%global osu_micro_bench_vers 7.1-1
 Summary: MPI Benchmarks and tests
 Name: mpitests
-Version: 5.8
-Release: 1%{?dist}
+Version: 7.1
+Release: 2%{?dist}.1
 License: CPL and BSD
 Group: Applications/Engineering
 # These days we get the benchmark soucres from Intel and OSU directly
@@ -11,9 +11,10 @@ Group: Applications/Engineering
 URL: http://www.openfabrics.org
 # https://software.intel.com/en-us/articles/intel-mpi-benchmarks
 Source0: https://github.com/intel/mpi-benchmarks/archive/%{intel_mpi_bench_vers}.tar.gz
-Source1: http://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-%{osu_micro_bench_vers}.tgz
+Source1: http://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-%{osu_micro_bench_vers}.tar.gz
 # Only for old openmpi
 #Patch101: OMB-disable-collective-async.patch
+Patch0001: 0001-Avoid-build-failure-for-i386.patch
 BuildRequires: hwloc-devel, libibmad-devel, rdma-core-devel
 BuildRequires: automake, autoconf, libtool
 BuildRequires: gcc, gcc-c++
@@ -68,7 +69,8 @@ MPI test suite compiled against the mvapich2 package using OmniPath
 %prep
 %setup -c 
 %setup -T -D -a 1
-cd osu-micro-benchmarks-5.8
+cd osu-micro-benchmarks-7.1-1
+%patch0001 -p1
 cd ..
 
 %build
@@ -172,6 +174,19 @@ do_install
 %endif
 
 %changelog
+* Tue Jul 11 2023 Kamal Heib <kheib@redhat.com> - 7.1-2.1
+- Avoid build failure for i386 arch
+- Resolves: rhbz#2220949
+
+* Tue Jul 11 2023 Kamal Heib <kheib@redhat.com> - 7.1-2
+- Avoid build failure for i686
+- Resolves: rhbz#2220949
+
+* Thu Jul 06 2023 Kamal Heib <kheib@redhat.com> - 7.1-1
+- Update OSU benchmarks ito upstream release 7.1
+- Add gating tests.
+- Resolves: rhbz#2220949
+
 * Fri Dec 10 2021 Honggang Li <honli@redhat.com> - 5.8-1
 - Update OSU benchmarks to upstream release 5.8
 - Update Intel MPI Benchmarks 2021.3
